@@ -7,8 +7,10 @@ export class UsuarioRepository {
             id: this.geraId(),
             ...usuario
         });
+    }
 
-        console.log(this.usuarios);
+    async listar() {
+        return this.usuarios;
     }
 
     private geraId() {
