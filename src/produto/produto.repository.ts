@@ -13,6 +13,10 @@ export class ProdutoRepository {
         return this.produtos;
     }
 
+    async listarPorId(id: number) {
+        return this.produtos.find((produto) => produto.id = id)
+    }
+
     private geraId(): number {
         return (this.id = this.id + 1);
     }
