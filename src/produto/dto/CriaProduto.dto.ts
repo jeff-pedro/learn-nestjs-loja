@@ -1,9 +1,12 @@
 import { Type } from "class-transformer";
-import { ArrayMinSize, IsArray, IsDateString, IsInt, IsNotEmpty, IsNumber, IsPositive, IsString, IsUrl, Max, Min, ValidateNested } from "class-validator";
+import { ArrayMinSize, IsArray, IsDateString, IsNotEmpty, IsNumber, IsPositive, IsUUID, MaxLength, Min, ValidateNested } from "class-validator";
 import { CaracteristicaProdutoDTO } from "./CaractersticaProdutoDTO";
 import { ImagemProdutoDTO } from "./ImagemProdutoDTO";
 
 export class CriaProdutoDTO {
+    @IsUUID(undefined, { message: 'ID de usuário inválido' })
+    usuarioId: number;
+
     @IsNotEmpty({ message: 'O nome do produto não pode ser vazio' })
     nome: string;
 
@@ -15,7 +18,7 @@ export class CriaProdutoDTO {
     quantidadeDisponivel: number;
 
     @IsNotEmpty({ message: 'A descrição não pode ser vazia' })
-    @Max(1000, { message: 'A descrição não pode ser maior que 1000 caracteres' })
+    @MaxLength(1000, { message: 'A descrição não pode ser maior que 1000 caracteres' })
     descricao: string;
 
     @IsArray()

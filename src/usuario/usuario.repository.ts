@@ -24,18 +24,6 @@ export class UsuarioRepository {
         return possivelUsuario !== undefined;
     }
 
-    async existeComId(id: number) {
-        const possivelUsuario = this.usuarios.find(
-            (usuario) => usuario.id === id
-        );
-
-        console.log(possivelUsuario);
-        console.log(this.usuarios);
-
-
-        return possivelUsuario !== undefined
-    }
-
     private geraId() {
         return this.id = this.id + 1;
     }

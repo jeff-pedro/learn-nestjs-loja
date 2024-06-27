@@ -1,6 +1,7 @@
 import { Body, Controller, Get, Param, ParseIntPipe, Post, ValidationPipe } from "@nestjs/common";
 import { ProdutoRepository } from "./produto.repository";
 import { CriaProdutoDTO } from "./dto/CriaProduto.dto";
+import { ListaProdutoParamsDTO } from "./dto/ListaProdutoParamsDTO";
 
 @Controller('/produtos')
 export class ProdutoController {
@@ -18,7 +19,7 @@ export class ProdutoController {
     }
 
     @Get(':id')
-    async listaProdutoPorId(@Param('id', ParseIntPipe) id: number) {
-        return await this.produtoRepository.listarPorId(id);
+    async listaProdutoPorId(@Param() params: ListaProdutoParamsDTO) {
+        return await this.produtoRepository.listarPorId(params.id);
     }
 }
