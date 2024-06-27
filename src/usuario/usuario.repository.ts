@@ -1,15 +1,12 @@
 import { Injectable } from "@nestjs/common";
+import { UsuarioEntity } from "./usuario.entity";
 
 @Injectable()
 export class UsuarioRepository {
-    private usuarios = [];
-    private id = 0;
+    private usuarios: UsuarioEntity[] = [];
 
-    async salvar(usuario) {
-        this.usuarios.push({
-            id: this.geraId(),
-            ...usuario
-        });
+    async salvar(usuario: UsuarioEntity) {
+        this.usuarios.push(usuario);
     }
 
     async listar() {
@@ -22,9 +19,5 @@ export class UsuarioRepository {
         );
 
         return possivelUsuario !== undefined;
-    }
-
-    private geraId() {
-        return this.id = this.id + 1;
     }
 }
