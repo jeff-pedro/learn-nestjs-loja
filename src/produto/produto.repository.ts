@@ -1,23 +1,52 @@
 import { Injectable } from "@nestjs/common";
+import { ProdutoEntity } from "./produto.entity";
 
 @Injectable()
 export class ProdutoRepository {
-    private produtos = [];
-    private id: number = 0;
+    private produtos: ProdutoEntity[] = [];
 
-    async salvar(produto) {
-        this.produtos.push({ id: this.geraId(), ...produto })
+    async salvar(produto: ProdutoEntity) {
+        this.produtos.push(produto)
     }
 
     async listar() {
         return this.produtos;
     }
 
-    async listarPorId(id: number) {
+    async listarPorId(id: string) {
         return this.produtos.find((produto) => produto.id = id)
     }
 
-    private geraId(): number {
-        return (this.id = this.id + 1);
+    private async buscaProdutoPorId(id: string) {
+        const possivelProduto = this.produtos.find(
+            (produtoSalvo) => produtoSalvo.id === id
+        )
+
+        if (!possivelProduto) {
+            throw new Error('Produto não encontrado');
+        }
+
+        return possivelProduto;
+    }
+
+    async atualizar(id: string, dadosDeAtualizacao: Partial<ProdutoEntity>) {
+        const produto = await this.buscaProdutoPorId(id);
+
+        Object.entries(dadosDeAtualizacao).forEach(([chave, valor]) => {
+            if (chave === 'id' || chave === 'usuarioId') return;
+            produto[chave] = valor;
+        })
+
+        return produto;
+    }
+
+    async remover(id: string) {
+        const produto = await this.buscaProdutoPorId(id);
+
+        this.produtos = this.produtos.filter(
+            (produtoSalvo) => produtoSalvo.id !== id
+        );
+
+        return produto;
     }
 }

@@ -43,8 +43,6 @@ export class UsuarioController {
 
     @Put('/:id')
     async atualizaUsuario(@Param('id') id: string, @Body() novosDados: AtualizaUsuarioDTO) {
-        console.log(novosDados);
-
         const usuarioAtualizado = await this.usuarioRepository.atualizar(id, novosDados);
         return {
             usuario: new ListaUsuarioDTO(
