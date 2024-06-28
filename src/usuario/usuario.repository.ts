@@ -23,10 +23,6 @@ export class UsuarioRepository {
         }
 
         /* Uma possivel implementação válida: */
-
-        /* Usando o utilitário Omit do TypeScript, não é necessário validar
-            se o id foi passado erronemante no corpo da requisição. */
-
         // if (!dadosDeAtualizacao.id) {
         //     Object.assign(possivelUsuario, dadosDeAtualizacao)
         // }
