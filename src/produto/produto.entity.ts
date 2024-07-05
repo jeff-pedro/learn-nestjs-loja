@@ -3,9 +3,12 @@ import {
     CreateDateColumn,
     DeleteDateColumn,
     Entity,
+    OneToMany,
     PrimaryGeneratedColumn,
     UpdateDateColumn,
 } from 'typeorm';
+import { ProdutoCaracteristica } from './produto-caracteristica.entity';
+import { ProdutoImagem } from './produto-imagem.entity';
 
 @Entity({ name: 'produtos' })
 export class ProdutoEntity {
@@ -31,10 +34,12 @@ export class ProdutoEntity {
     categoria: string;
 
     // @Column({ name: 'caracteristicas', length: 255, nullable: false })
-    // caracteristicas: Object;
+    @OneToMany(() => ProdutoCaracteristica, (caracterisca) => caracterisca.produto)
+    caracteristicas!: ProdutoCaracteristica[];
 
     // @Column({ name: 'imagens' })
-    // imagens: Object;
+    @OneToMany(() => ProdutoImagem, (imagem) => imagem.produto)
+    imagens!: ProdutoImagem[];
 
     @CreateDateColumn({ name: 'created_at' })
     createdAt: string;
