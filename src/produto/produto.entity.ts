@@ -3,20 +3,23 @@ import {
     CreateDateColumn,
     DeleteDateColumn,
     Entity,
+    JoinColumn,
     OneToMany,
+    OneToOne,
     PrimaryGeneratedColumn,
     UpdateDateColumn,
 } from 'typeorm';
-import { ProdutoCaracteristica } from './produto-caracteristica.entity';
-import { ProdutoImagem } from './produto-imagem.entity';
+import { ProdutoCaracteristicaEntity } from './produto-caracteristica.entity';
+import { ProdutoImagemEntity } from './produto-imagem.entity';
+import { UsuarioEntity } from 'src/usuario/usuario.entity';
 
 @Entity({ name: 'produtos' })
 export class ProdutoEntity {
     @PrimaryGeneratedColumn('uuid')
     id: string;
 
-    @Column({ name: 'usuario_id', length: 100, nullable: false })
-    usuarioId: string;
+    // @Column({ name: 'usuario_id', length: 100, nullable: false })
+    // usuarioId: string;
 
     @Column({ name: 'nome', length: 100, nullable: false })
     nome: string;
@@ -33,13 +36,17 @@ export class ProdutoEntity {
     @Column({ name: 'categoria', length: 100, nullable: false })
     categoria: string;
 
-    // @Column({ name: 'caracteristicas', length: 255, nullable: false })
-    @OneToMany(() => ProdutoCaracteristica, (caracterisca) => caracterisca.produto)
-    caracteristicas!: ProdutoCaracteristica[];
+    @OneToMany(() => ProdutoCaracteristicaEntity,
+        (caracteristica) => caracteristica.produto, { cascade: true, eager: true })
+    caracteristicas: ProdutoCaracteristicaEntity[];
 
-    // @Column({ name: 'imagens' })
-    @OneToMany(() => ProdutoImagem, (imagem) => imagem.produto)
-    imagens!: ProdutoImagem[];
+    @OneToMany(() => ProdutoImagemEntity,
+        (imagem) => imagem.produto, { cascade: true, eager: true })
+    imagens: ProdutoImagemEntity[];
+
+    @OneToOne(() => UsuarioEntity, (usuario) => usuario.produto)
+    @JoinColumn({ name: 'usuarioId' })
+    usuario: UsuarioEntity
 
     @CreateDateColumn({ name: 'created_at' })
     createdAt: string;

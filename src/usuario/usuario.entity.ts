@@ -1,8 +1,10 @@
+import { ProdutoEntity } from 'src/produto/produto.entity';
 import {
     Column,
     CreateDateColumn,
     DeleteDateColumn,
     Entity,
+    OneToOne,
     PrimaryGeneratedColumn,
     UpdateDateColumn,
 } from 'typeorm';
@@ -20,6 +22,9 @@ export class UsuarioEntity {
 
     @Column({ name: 'senha', length: 255, nullable: false })
     senha: string;
+
+    @OneToOne(() => ProdutoEntity, (produto) => produto.usuario, { cascade: true, eager: true })
+    produto: ProdutoEntity
 
     @CreateDateColumn({ name: 'created_at' })
     createdAt: string;

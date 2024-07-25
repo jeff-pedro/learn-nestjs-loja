@@ -1,6 +1,5 @@
 import { Body, Controller, Delete, Get, Param, Post, Put } from "@nestjs/common";
 import { v4 as uuid } from 'uuid';
-import { ProdutoRepository } from "./produto.repository";
 import { CriaProdutoDTO } from "./dto/CriaProduto.dto";
 import { ListaProdutoParamsDTO } from "./dto/ListaProdutoParamsDTO";
 import { ProdutoEntity } from "./produto.entity";
@@ -10,10 +9,7 @@ import { AtualizaProdutoDTO } from "./dto/AtualizaProduto.dto";
 
 @Controller('/produtos')
 export class ProdutoController {
-    constructor(
-        private produtoRepository: ProdutoRepository,
-        private produtoService: ProdutoService
-    ) { }
+    constructor(private produtoService: ProdutoService) { }
 
     @Post()
     async criaProduto(@Body() dadosDoProduto: CriaProdutoDTO) {
