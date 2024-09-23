@@ -1,9 +1,6 @@
 import { Body, Controller, Delete, Get, Param, Post, Put } from "@nestjs/common";
-import { v4 as uuid } from 'uuid';
 import { CriaProdutoDTO } from "./dto/CriaProduto.dto";
 import { ListaProdutoParamsDTO } from "./dto/ListaProdutoParamsDTO";
-import { ProdutoEntity } from "./produto.entity";
-import { ListaProdutoDTO } from "./dto/ListaProduto.dto";
 import { ProdutoService } from "./produto.service";
 import { AtualizaProdutoDTO } from "./dto/AtualizaProduto.dto";
 
@@ -12,20 +9,12 @@ export class ProdutoController {
     constructor(private produtoService: ProdutoService) { }
 
     @Post()
-    async criaProduto(@Body() dadosDoProduto: CriaProdutoDTO) {
-        const produtoEntity = new ProdutoEntity();
-
-        produtoEntity.id = uuid();
-        Object.assign(produtoEntity, dadosDoProduto);
-
-        await this.produtoService.criaProduto(produtoEntity);
+    async criaNovo(@Body() dadosDoProduto: CriaProdutoDTO) {
+        const produtoCadastrado = await this.produtoService.criaProduto(dadosDoProduto);
 
         return {
-            produto: new ListaProdutoDTO(
-                produtoEntity.id,
-                produtoEntity.nome
-            ),
-            mensagem: 'produto criado com sucesso'
+            mensagem: 'Produto criado com sucesso.',
+            produto: produtoCadastrado,
         };
     }
 

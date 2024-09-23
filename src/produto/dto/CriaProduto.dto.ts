@@ -32,7 +32,7 @@ export class CriaProdutoDTO {
     valor: number;
 
     @Min(0, { message: 'A quantidade precisa ser um número igual ou maior que zero' })
-    quantidade: number;
+    quantidadeDisponivel: number;
 
     @IsNotEmpty({ message: 'A descrição não pode ser vazia' })
     @MaxLength(1000, { message: 'A descrição não pode ser maior que 1000 caracteres' })
