@@ -9,7 +9,7 @@ export class ProdutoController {
     constructor(private produtoService: ProdutoService) { }
 
     @Post()
-    async criaNovo(@Body() dadosDoProduto: CriaProdutoDTO) {
+    async criaProduto(@Body() dadosDoProduto: CriaProdutoDTO) {
         const produtoCadastrado = await this.produtoService.criaProduto(dadosDoProduto);
 
         return {
