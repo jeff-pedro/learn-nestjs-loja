@@ -4,6 +4,7 @@ import { InjectRepository } from "@nestjs/typeorm"
 import { Repository } from "typeorm";
 import { ListaUsuarioDTO } from "./dto/ListaUsuario.dto";
 import { AtualizaUsuarioDTO } from "./dto/AtualizaUsuario.dto";
+import { CriaUsuarioDTO } from "./dto/CriaUsuario.dto";
 
 @Injectable()
 export class UsuarioService {
@@ -12,8 +13,12 @@ export class UsuarioService {
         private readonly usuarioRepository: Repository<UsuarioEntity>
     ) { }
 
-    async criaUsuario(usuarioEntity: UsuarioEntity) {
-        await this.usuarioRepository.save(usuarioEntity);
+    async criaUsuario(dadosDoUsuario: CriaUsuarioDTO) {
+        const usuarioEntity = new UsuarioEntity()
+
+        Object.assign(usuarioEntity, dadosDoUsuario);
+
+        return await this.usuarioRepository.save(usuarioEntity);
     }
 
     async listaUsuarios() {
