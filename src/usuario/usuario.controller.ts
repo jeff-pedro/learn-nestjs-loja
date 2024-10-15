@@ -15,12 +15,9 @@ export class UsuarioController {
         const usuarioCriado = await this.usuarioService.criaUsuario(dadosDoUsuario);
 
         return {
-            usuario: new ListaUsuarioDTO(
-                usuarioCriado.id,
-                usuarioCriado.nome,
-                usuarioCriado.email),
+            usuario: new ListaUsuarioDTO(usuarioCriado.id,usuarioCriado.nome,usuarioCriado.email),
             mensagem: 'usuário criado com sucesso'
-        };''
+        };
     }
 
     @Get()
