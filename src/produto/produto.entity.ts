@@ -1,59 +1,59 @@
 import {
+    Entity,
     Column,
     CreateDateColumn,
-    DeleteDateColumn,
-    Entity,
-    JoinColumn,
-    OneToMany,
-    OneToOne,
-    PrimaryGeneratedColumn,
     UpdateDateColumn,
-} from 'typeorm';
-import { ProdutoCaracteristicaEntity } from './produto-caracteristica.entity';
-import { ProdutoImagemEntity } from './produto-imagem.entity';
-import { UsuarioEntity } from 'src/usuario/usuario.entity';
-
-@Entity({ name: 'produtos' })
-export class ProdutoEntity {
+    DeleteDateColumn,
+    PrimaryGeneratedColumn,
+    OneToMany,
+  } from 'typeorm';
+  import { ProdutoImagemEntity } from './produto-imagem.entity';
+  import { ProdutoCaracteristicaEntity } from './produto-caracteristica.entity';
+  
+  @Entity({ name: 'produtos' })
+  export class ProdutoEntity {
     @PrimaryGeneratedColumn('uuid')
     id: string;
-
-    // @Column({ name: 'usuario_id', length: 100, nullable: false })
-    // usuarioId: string;
-
+  
+    @Column({ name: 'usuario_id', length: 100, nullable: false })
+    usuarioId: string;
+  
     @Column({ name: 'nome', length: 100, nullable: false })
     nome: string;
-
+  
     @Column({ name: 'valor', nullable: false })
     valor: number;
-
+  
     @Column({ name: 'quantidade_disponivel', nullable: false })
     quantidadeDisponivel: number;
-
+  
     @Column({ name: 'descricao', length: 255, nullable: false })
     descricao: string;
-
+  
     @Column({ name: 'categoria', length: 100, nullable: false })
     categoria: string;
-
-    @OneToMany(() => ProdutoCaracteristicaEntity,
-        (caracteristica) => caracteristica.produto, { cascade: true, eager: true })
-    caracteristicas: ProdutoCaracteristicaEntity[];
-
-    @OneToMany(() => ProdutoImagemEntity,
-        (imagem) => imagem.produto, { cascade: true, eager: true })
-    imagens: ProdutoImagemEntity[];
-
-    @OneToOne(() => UsuarioEntity, (usuario) => usuario.produto)
-    @JoinColumn({ name: 'usuarioId' })
-    usuario: UsuarioEntity
-
+  
     @CreateDateColumn({ name: 'created_at' })
     createdAt: string;
-
+  
     @UpdateDateColumn({ name: 'updated_at' })
     updatedAt: string;
-
+  
     @DeleteDateColumn({ name: 'deleted_at' })
     deletedAt: string;
-}
+  
+    @OneToMany(
+      () => ProdutoImagemEntity,
+      (produtoImagemEntity) => produtoImagemEntity.produto,
+      { cascade: true, eager: true },
+    )
+    imagens: ProdutoImagemEntity[];
+  
+    @OneToMany(
+      () => ProdutoCaracteristicaEntity,
+      (produtoCaracteristicaEntity) => produtoCaracteristicaEntity.produto,
+      { cascade: true, eager: true },
+    )
+    caracteristicas: ProdutoCaracteristicaEntity[];
+  }
+  
