@@ -21,9 +21,6 @@ export class ImagemProdutoDTO {
 }
 
 export class CriaProdutoDTO {
-    @IsUUID(undefined, { message: 'ID de usuário inválido' })
-    usuarioId: string;
-
     @IsNotEmpty({ message: 'O nome do produto não pode ser vazio' })
     nome: string;
 
