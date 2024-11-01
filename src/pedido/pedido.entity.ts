@@ -1,6 +1,7 @@
-import { Column, CreateDateColumn, DeleteDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { Column, CreateDateColumn, DeleteDateColumn, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 import { StatusPedido } from "./enum/status-pedido.enum";
 import { UsuarioEntity } from "../usuario/usuario.entity";
+import { ItemPedidoEntity } from "./itempedido.entity";
 
 @Entity('pedidos')
 export class PedidoEntity {
@@ -13,9 +14,6 @@ export class PedidoEntity {
     @Column({ name: 'status', enum: StatusPedido, nullable: false })
     status: StatusPedido;
 
-    // @Column({ name: 'itens_pedidos', nullable: false })
-    // itensPedido: ItemPedido[];
-
     @CreateDateColumn({ name: 'created_at' })
     createdAt: string;
 
@@ -27,4 +25,9 @@ export class PedidoEntity {
 
     @ManyToOne(() => UsuarioEntity, (usuario) => usuario.pedidos)
     usuario: UsuarioEntity;
+
+    @OneToMany(() => ItemPedidoEntity, (itemPedido) => itemPedido.pedido, {
+        cascade: true
+    })
+    itensPedido: ItemPedidoEntity[];
 }
