@@ -10,7 +10,7 @@ export class ProdutoService {
     constructor(
         @InjectRepository(ProdutoEntity)
         private readonly produtoRepository: Repository<ProdutoEntity>
-    ) { };
+    ) {};
 
     async criaProduto(dadosProduto: CriaProdutoDTO) {
         const produtoEntity = new ProdutoEntity();

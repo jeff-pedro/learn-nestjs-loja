@@ -1,26 +1,53 @@
-import { Injectable } from '@nestjs/common';
-import { CreatePedidoDto } from './dto/create-pedido.dto';
-import { UpdatePedidoDto } from './dto/update-pedido.dto';
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { PedidoEntity } from './pedido.entity';
+import { StatusPedido } from './enum/status-pedido.enum';
+import { InjectRepository } from '@nestjs/typeorm';
+import { UsuarioEntity } from 'src/usuario/usuario.entity';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class PedidoService {
-  create(createPedidoDto: CreatePedidoDto) {
-    return 'This action adds a new pedido';
+  constructor(
+    @InjectRepository(PedidoEntity)
+    private readonly pedidoRepository: Repository<PedidoEntity>,
+    
+    @InjectRepository(UsuarioEntity)
+    private readonly usuarioRepository: Repository<UsuarioEntity>,
+
+  ) {};
+
+  async cadastraPedido(usuarioId: string) {
+
+    const usuario = await this.usuarioRepository.findOneBy({ id: usuarioId });
+
+    if (!usuario) {
+      throw new NotFoundException(`Usuário com id ${usuarioId} não existe`);
+    }
+
+    const pedido = new PedidoEntity();
+    
+    pedido.valorTotal = 0
+    pedido.status = StatusPedido.EM_PROCESSAMENTO;
+    pedido.usuario = usuario;
+  
+    try {
+      const pedidoCriado = await this.pedidoRepository.save(pedido);
+      return pedidoCriado;
+    } catch (error) {
+      throw new Error(error);
+    }
   }
 
-  findAll() {
-    return `This action returns all pedido`;
+  async obtemPedidosDeUsuario(usuarioId: string) {
+    return this.pedidoRepository.find({ 
+      relations: ['usuario'],
+      where: {
+        usuario: { id: usuarioId }
+      }
+     });
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} pedido`;
-  }
-
-  update(id: number, updatePedidoDto: UpdatePedidoDto) {
-    return `This action updates a #${id} pedido`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} pedido`;
+  async listaPedidoPorId(id: string) {
+    return await this.pedidoRepository.findOneBy({ id });
   }
 }
