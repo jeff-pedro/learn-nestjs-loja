@@ -2,7 +2,7 @@ import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 import { PedidoEntity } from "./pedido.entity";
 import { ProdutoEntity } from "../produto/produto.entity";
 
-@Entity()
+@Entity('itens_pedido ')
 export class ItemPedidoEntity {
     @PrimaryGeneratedColumn('uuid')
     id: string;

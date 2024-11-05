@@ -4,6 +4,8 @@ import { StatusPedido } from './enum/status-pedido.enum';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UsuarioEntity } from 'src/usuario/usuario.entity';
 import { Repository } from 'typeorm';
+import { CriaPedidoDTO } from './dto/CriaPedido.dto';
+import { ItemPedidoEntity } from './itempedido.entity';
 
 @Injectable()
 export class PedidoService {
@@ -16,7 +18,7 @@ export class PedidoService {
 
   ) {};
 
-  async cadastraPedido(usuarioId: string) {
+  async cadastraPedido(usuarioId: string, dadosDoPedido: CriaPedidoDTO) {
 
     const usuario = await this.usuarioRepository.findOneBy({ id: usuarioId });
 
@@ -24,14 +26,31 @@ export class PedidoService {
       throw new NotFoundException(`Usuário com id ${usuarioId} não existe`);
     }
 
-    const pedido = new PedidoEntity();
+    const pedidoEntity = new PedidoEntity();
+
     
-    pedido.valorTotal = 0
-    pedido.status = StatusPedido.EM_PROCESSAMENTO;
-    pedido.usuario = usuario;
-  
+    // pedido.valorTotal = 0
+    pedidoEntity.status = StatusPedido.EM_PROCESSAMENTO;
+    pedidoEntity.usuario = usuario;
+    
+    const itensPedidoEntidades = dadosDoPedido.itensPedido.map(itemPedido => {
+      const itemPedidoEntity = new ItemPedidoEntity()
+      
+      itemPedidoEntity.precoVenda = 10;
+      itemPedidoEntity.quantidade = itemPedido.quantidade
+      
+      return itemPedidoEntity;
+    });
+
+    const valorTotal = itensPedidoEntidades.reduce((total, item) => {
+      return total + Number(item.precoVenda) * item.quantidade;
+    }, 0);
+
+    pedidoEntity.itensPedido = itensPedidoEntidades
+    pedidoEntity.valorTotal = valorTotal;
+    
     try {
-      const pedidoCriado = await this.pedidoRepository.save(pedido);
+      const pedidoCriado = await this.pedidoRepository.save(pedidoEntity);
       return pedidoCriado;
     } catch (error) {
       throw new Error(error);
