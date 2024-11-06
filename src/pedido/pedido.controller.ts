@@ -1,6 +1,7 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete, Query } from '@nestjs/common';
 import { PedidoService } from './pedido.service';
 import { CriaPedidoDTO } from './dto/CriaPedido.dto';
+import { AtualizaPedidoDTO } from './dto/AtualizaPedido.dto';
 
 @Controller('/pedidos')
 export class PedidoController {
@@ -20,18 +21,21 @@ export class PedidoController {
 
   @Get()
   async obtemPedidosDeUsuario(@Query('usuarioId') usuarioId: string) {
-    return await this.pedidoService.obtemPedidosDeUsuario(usuarioId);
+    return this.pedidoService.obtemPedidosDeUsuario(usuarioId);
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.pedidoService.listaPedidoPorId(id);
+  async findOne(@Param('id') id: string) {
+    return this.pedidoService.obtemPedidoDeUsuarioPorId(id);
   }
 
-  // @Patch(':id')
-  // update(@Param('id') id: string, @Body() updatePedidoDto: UpdatePedidoDto) {
-  //   return this.pedidoService.update(+id, updatePedidoDto);
-  // }
+  @Patch(':id')
+  async atualizaPedido(
+    @Param('id') pedidoId: string, 
+    @Body() dadosDeAtualizacao: AtualizaPedidoDTO
+  ) {
+    return this.pedidoService.atualizaPedido(pedidoId, dadosDeAtualizacao);
+  }
 
   // @Delete(':id')
   // remove(@Param('id') id: string) {

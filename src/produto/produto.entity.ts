@@ -42,21 +42,22 @@ import { ItemPedidoEntity } from '../pedido/itempedido.entity';
   
     @OneToMany(
       () => ProdutoImagemEntity,
-      (produtoImagemEntity) => produtoImagemEntity.produto,
+      (produtoImagem) => produtoImagem.produto,
       { cascade: true, eager: true },
     )
     imagens: ProdutoImagemEntity[];
   
     @OneToMany(
       () => ProdutoCaracteristicaEntity,
-      (produtoCaracteristicaEntity) => produtoCaracteristicaEntity.produto,
+      (produtoCaracteristica) => produtoCaracteristica.produto,
       { cascade: true, eager: true },
     )
     caracteristicas: ProdutoCaracteristicaEntity[];
 
     @OneToMany(
       () => ItemPedidoEntity,
-      (itemPedidoEntity) => itemPedidoEntity.pedido,
+      (itemPedidoEntity) => itemPedidoEntity.produto,
+      { cascade: ['update'] }
     )
     itensPedido: ItemPedidoEntity[];
   }

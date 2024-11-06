@@ -50,9 +50,9 @@ export class CriaProdutoDTO {
     @IsNotEmpty({ message: 'A categoria do produto não pode ser vazia' })
     categoria: string;
 
-    @IsDateString()
-    dataCriacao: Date;
+    // @IsDateString()
+    // dataCriacao: Date;
 
-    @IsDateString()
-    dataAtualizacao: Date;
+    // @IsDateString()
+    // dataAtualizacao: Date;
 }

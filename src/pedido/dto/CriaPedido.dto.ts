@@ -1,7 +1,10 @@
-import { ArrayMinSize, IsArray, IsDecimal, IsInt, IsNumber, IsOptional, IsPositive, IsString, ValidateNested } from "class-validator";
+import { ArrayMinSize, IsArray, IsInt, IsOptional, IsPositive, IsString, IsUUID, ValidateNested } from "class-validator";
 import { Type } from "class-transformer";
 
 class ItemPedidoDTO {
+    @IsUUID()
+    produtoId: string;
+    
     @IsPositive()
     @IsInt()
     quantidade: number;
