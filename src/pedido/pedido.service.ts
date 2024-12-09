@@ -14,14 +14,14 @@ export class PedidoService {
   constructor(
     @InjectRepository(PedidoEntity)
     private readonly pedidoRepository: Repository<PedidoEntity>,
-    
+
     @InjectRepository(UsuarioEntity)
     private readonly usuarioRepository: Repository<UsuarioEntity>,
 
     @InjectRepository(ProdutoEntity)
     private readonly produtoRepository: Repository<ProdutoEntity>,
 
-  ) {};
+  ) { };
 
   async buscaPedidos(itemPedido): Promise<ProdutoEntity> {
     const pedido = await this.produtoRepository.findOneBy({ id: itemPedido.produtoId });
@@ -43,6 +43,22 @@ export class PedidoService {
     return usuario;
   }
 
+  private trataDadosDoPedido(dadosDoPedido: CriaPedidoDTO, produtosRelacionados: ProdutoEntity[]) {
+    dadosDoPedido.itensPedido.forEach((itemPedido) => {
+      const produtoRelacionado = produtosRelacionados.find(
+        (produto) => produto.id === itemPedido.produtoId
+      );
+
+      if (produtoRelacionado === undefined) {
+        throw new NotFoundException(`O produdo com id ${itemPedido.produtoId} não foi encontrado.`);
+      }
+
+      if (itemPedido.quantidade > produtoRelacionado.quantidadeDisponivel) {
+        throw new BadRequestException(`A quantidade solicitada (${itemPedido.quantidade}) é maior do que a disponível (${produtoRelacionado.quantidadeDisponivel}) para o produto ${produtoRelacionado.nome}.`);
+        }
+      });
+  };
+
   async cadastraPedido(usuarioId: string, dadosDoPedido: CriaPedidoDTO) {
     const usuario = await this.buscaUsuario(usuarioId);
 
@@ -56,30 +72,25 @@ export class PedidoService {
     );
 
     const produtosRelacionados = await this.produtoRepository.findBy({ 
-      id: In(produtosIds) 
+      id: In(produtosIds)
     });
+
+    this.trataDadosDoPedido(dadosDoPedido, produtosRelacionados);
     
     const itensPedidoEntidades = dadosDoPedido.itensPedido.map((itemPedido) => {
       const produtoRelacionado = produtosRelacionados.find((produto) => produto.id === itemPedido.produtoId);
       
-      if (produtoRelacionado === undefined) {
-        throw new NotFoundException(`O produdo com id ${itemPedido.produtoId} não foi encontrado.`)
-      }
+      const itemPedidoEntity = new ItemPedidoEntity();
       
-      const itemPedidoEntity = new ItemPedidoEntity()
+      itemPedidoEntity.produto = produtoRelacionado!;
+      itemPedidoEntity.precoVenda = produtoRelacionado!.valor;
       
-      itemPedidoEntity.produto = produtoRelacionado;
-      itemPedidoEntity.precoVenda = produtoRelacionado.valor;
-      itemPedidoEntity.quantidade = itemPedido.quantidade
-
-      const quantidadeDisponivel = itemPedidoEntity.produto.quantidadeDisponivel
+      itemPedidoEntity.quantidade = itemPedido.quantidade; 
       
-      if (itemPedido.quantidade > quantidadeDisponivel) {
-        throw new BadRequestException("Quantidade indisponível do produto.")
-      } 
+      itemPedidoEntity.produto.quantidadeDisponivel -= itemPedido.quantidade;
 
-      // await this.produtoRepository.save(itemPedidoEntity.produto);
-
+      this.produtoRepository.save(itemPedidoEntity.produto); // verificar o código do curso, pois não tinha essa linha
+      
       return itemPedidoEntity;
     });
     
@@ -107,7 +118,7 @@ export class PedidoService {
      });
 
      if (pedido.length === 0) {
-      throw new NotFoundException(`Nenhum pedido para o usuário com id ${usuarioId} foi encontrado.`);
+      throw new NotFoundException(`Nenhum pedido para o usuário com id ${ usuarioId } foi encontrado.`);
      }
     
     return pedido;

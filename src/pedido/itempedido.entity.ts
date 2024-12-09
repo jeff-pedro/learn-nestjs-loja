@@ -7,8 +7,6 @@ export class ItemPedidoEntity {
     @PrimaryGeneratedColumn('uuid')
     id: string;
 
-    
-
     @Column({ name: "quantidade", nullable: false })
     quantidade: number;
 
