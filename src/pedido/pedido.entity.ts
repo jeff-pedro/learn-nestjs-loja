@@ -30,4 +30,5 @@ export class PedidoEntity {
         cascade: true
     })
     itensPedido: ItemPedidoEntity[];
+  pedidoEntity: Promise<UsuarioEntity>;
 }

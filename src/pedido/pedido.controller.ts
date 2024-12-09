@@ -24,11 +24,6 @@ export class PedidoController {
     return this.pedidoService.obtemPedidosDeUsuario(usuarioId);
   }
 
-  @Get(':id')
-  async findOne(@Param('id') id: string) {
-    return this.pedidoService.obtemPedidoDeUsuarioPorId(id);
-  }
-
   @Patch(':id')
   async atualizaPedido(
     @Param('id') pedidoId: string, 

@@ -1,4 +1,4 @@
-import { Injectable, } from "@nestjs/common";
+import { Injectable, NotFoundException, } from "@nestjs/common";
 import { UsuarioEntity } from "./usuario.entity";
 import { InjectRepository } from "@nestjs/typeorm"
 import { Repository } from "typeorm";
@@ -23,6 +23,11 @@ export class UsuarioService {
 
     async listaUsuarios() {
         const usuariosSalvos = await this.usuarioRepository.find();
+
+        if (usuariosSalvos.length === 0) {
+            throw new NotFoundException("Nenhum usuário cadastrado.")
+        }
+
         const usuariosLista = usuariosSalvos.map(
             (usuario) => new ListaUsuarioDTO(
                 usuario.id,

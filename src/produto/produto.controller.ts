@@ -30,9 +30,8 @@ export class ProdutoController {
 
     @Put('/:id')
     async atualizaProduto(@Param('id') id: string, @Body() novosDados: AtualizaProdutoDTO) {
-        const produtoAtualizado = await this.produtoService.atualizaProduto(id, novosDados);
+        await this.produtoService.atualizaProduto(id, novosDados);
         return {
-            produto: produtoAtualizado,
             mensagem: 'produto atualizado com sucesso'
         }
     }
