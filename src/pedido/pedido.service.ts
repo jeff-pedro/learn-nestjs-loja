@@ -127,14 +127,14 @@ export class PedidoService {
   async atualizaPedido(id: string, dto: AtualizaPedidoDTO) {
     const pedido = await this.pedidoRepository.findOneBy({ id });
 
-    // throw new Error("Simulando erro de banco de dadoss")
+    throw new Error("Simulando erro de banco de dadoss")
 
     if (pedido === null) {
       throw new NotFoundException('O pedido não foi encontrado.');
     }
 
-    Object.assign(pedido, dto);
+    // Object.assign(pedido, dto);
 
-    return this.pedidoRepository.save(pedido);
+    // return this.pedidoRepository.save(pedido);
   }
 }
