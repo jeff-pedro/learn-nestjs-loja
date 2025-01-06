@@ -15,7 +15,8 @@ export class ProdutoService {
     async criaProduto(dadosProduto: CriaProdutoDTO) {
         const produtoEntity = new ProdutoEntity();
 
-        Object.assign(produtoEntity, dadosProduto);
+        Object.assign(produtoEntity, dadosProduto as ProdutoEntity);
+        // Object.assign(produtoEntity, <ProdutoEntity> dadosProduto);
 
         return this.produtoRepository.save(produtoEntity);
     }
@@ -30,29 +31,33 @@ export class ProdutoService {
         return produto;
     }
 
-    async listaProdutoPorId(id: string) {
-        const produto = await this.produtoRepository.findOne({ where: { id } });
+    private async buscaProduto(id: string) {
+        const produto = await this.produtoRepository.findOneBy({ id });
 
-        if (!produto) {
+        if (produto === null) {
             throw new NotFoundException("Produto não encontrado.");
         }
 
         return produto;
     }
 
+    async listaProdutoPorId(id: string) {
+        return this.buscaProduto(id);
+    }
+
     async atualizaProduto(id: string, novosDados: AtualizaProdutoDTO) {
-        const produtoEntity = await this.produtoRepository.findOneBy({ id });
+        const produtoEntity = await this.buscaProduto(id);
 
-        if (produtoEntity === null) {
-            throw new NotFoundException("O produto não foi encontrado.");
-        }
-
-        Object.assign(produtoEntity, novosDados);
+        Object.assign(produtoEntity, novosDados as ProdutoEntity);
 
         return this.produtoRepository.save(produtoEntity);
     }
 
     async deletaProduto(id: string) {
-        return this.produtoRepository.delete(id);
+        const resultado = await this.produtoRepository.delete(id);
+
+        if(!resultado.affected) {
+            throw new NotFoundException("Produto não encontrado.");
+        }
     }
 }

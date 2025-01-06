@@ -16,7 +16,7 @@ export class UsuarioService {
     async criaUsuario(dadosDoUsuario: CriaUsuarioDTO) {
         const usuarioEntity = new UsuarioEntity()
 
-        Object.assign(usuarioEntity, dadosDoUsuario);
+        Object.assign(usuarioEntity, dadosDoUsuario as UsuarioEntity);
 
         return await this.usuarioRepository.save(usuarioEntity);
     }
@@ -40,11 +40,39 @@ export class UsuarioService {
         return usuariosLista;
     }
 
-    async atualizaUsuario(id: string, usuarioDTO: AtualizaUsuarioDTO) {
-        await this.usuarioRepository.update(id, usuarioDTO);
+    async buscaPorEmail(email: string) {
+        const checkEmail = await this.usuarioRepository.findOneBy({ email });
+
+        if (checkEmail === null) {
+            throw new NotFoundException("Usuário não encontrado.");
+        }
+
+        return checkEmail;
+    }
+
+    private async buscaUsuario(id: string) {
+        const usuario = await this.usuarioRepository.findOneBy({ id });
+
+        if (usuario === null) {
+            throw new NotFoundException("Usuário não encontrado.");
+        }
+    
+        return usuario;
+    }
+
+    async atualizaUsuario(id: string, novosDados: AtualizaUsuarioDTO) {
+        const usuarioEntity = await this.buscaUsuario(id);;
+
+        Object.assign(usuarioEntity, novosDados as UsuarioEntity)
+
+        await this.usuarioRepository.save(usuarioEntity);
     }
 
     async delataUsuario(id: string) {
-        await this.usuarioRepository.delete(id);
+        const resultado = await this.usuarioRepository.delete(id);
+
+        if (!resultado.affected) {
+            throw new NotFoundException("Usuário não encontrado.");
+        }
     }
 }

@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Post, Put } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Put, Query } from '@nestjs/common';
 import { CriaUsuarioDTO } from './dto/CriaUsuario.dto';
 import { ListaUsuarioDTO } from './dto/ListaUsuario.dto';
 import { AtualizaUsuarioDTO } from './dto/AtualizaUsuario.dto';
@@ -18,6 +18,12 @@ export class UsuarioController {
             usuario: new ListaUsuarioDTO(usuarioCriado.id,usuarioCriado.nome,usuarioCriado.email),
             mensagem: 'usuário criado com sucesso'
         };
+    }
+
+    @Get()
+    async buscaUsuarioPorEmail(@Query('email') email: string) {
+        const usuariosEncontrado = await this.usuarioService.buscaPorEmail(email);
+        return usuariosEncontrado;
     }
 
     @Get()
