@@ -1,5 +1,5 @@
 import { Type } from "class-transformer";
-import { ArrayMinSize, IsArray, IsDateString, IsNotEmpty, IsNumber, IsPositive, IsUUID, IsUrl, MaxLength, Min, ValidateNested } from "class-validator";
+import { ArrayMinSize, IsArray, IsNotEmpty, IsNumber, IsPositive, IsUrl, MaxLength, Min, ValidateNested } from "class-validator";
 import { ProdutoEntity } from "../produto.entity";
 
 export class CaracteristicaProdutoDTO {
