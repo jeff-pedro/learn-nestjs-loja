@@ -2,11 +2,11 @@ import { BadRequestException, Injectable, NotFoundException } from '@nestjs/comm
 import { PedidoEntity } from './pedido.entity';
 import { StatusPedido } from './enum/status-pedido.enum';
 import { InjectRepository } from '@nestjs/typeorm';
-import { UsuarioEntity } from 'src/usuario/usuario.entity';
+import { UsuarioEntity } from 'src/modulos/usuario/usuario.entity';
 import { In, Repository } from 'typeorm';
 import { CriaPedidoDTO } from './dto/CriaPedido.dto';
 import { ItemPedidoEntity } from './itempedido.entity';
-import { ProdutoEntity } from 'src/produto/produto.entity';
+import { ProdutoEntity } from 'src/modulos/produto/produto.entity';
 import { AtualizaPedidoDTO } from './dto/AtualizaPedido.dto';
 
 @Injectable()
