@@ -1,13 +1,18 @@
-import { Body, Controller, Delete, Get, Param, Post, Put, UseInterceptors } from "@nestjs/common";
+import { Body, Controller, Delete, Get, Inject, Param, Post, Put, UseInterceptors } from "@nestjs/common";
 import { CriaProdutoDTO } from "./dto/CriaProduto.dto";
 import { ListaProdutoParamsDTO } from "./dto/ListaProdutoParamsDTO";
 import { ProdutoService } from "./produto.service";
 import { AtualizaProdutoDTO } from "./dto/AtualizaProduto.dto";
-import { CacheInterceptor } from "@nestjs/cache-manager";
+import { CACHE_MANAGER, CacheInterceptor } from "@nestjs/cache-manager";
+import { Cache } from "cache-manager";
+import { ProdutoEntity } from "./produto.entity";
 
 @Controller('/produtos')
 export class ProdutoController {
-    constructor(private produtoService: ProdutoService) { }
+    constructor(
+        private produtoService: ProdutoService,
+        @Inject(CACHE_MANAGER) private cacheManager: Cache,
+    ) { }
 
     @Post()
     async criaProduto(@Body() dadosDoProduto: CriaProdutoDTO) {
@@ -20,6 +25,7 @@ export class ProdutoController {
     }
 
     @Get()
+    @UseInterceptors(CacheInterceptor)
     async listaProdutos() {
         return await this.produtoService.listaProdutos();
     }
@@ -27,12 +33,21 @@ export class ProdutoController {
     @Get('/:id')
     @UseInterceptors(CacheInterceptor)
     async listaProdutoPorId(@Param() params: ListaProdutoParamsDTO) {
-        const produtoSalvo = await this.produtoService.listaProdutoPorId(params.id);
-
-        console.log('Produto sendo buscaso do BD!');
+        let produto = await this.cacheManager.get<ProdutoEntity>(`produto-${params.id}`)
+        console.log(produto);
         
 
-        return produtoSalvo;
+        if(!produto) {
+            console.log('Obtendo produto do cache!');
+            produto = await this.produtoService.listaProdutoPorId(params.id);
+
+            await this.cacheManager.set(`produto-${params.id}`, produto)
+        }
+
+        return {
+            mensagem: 'produto encontrado com sucesso',
+            produto
+        };
     }
 
     @Put('/:id')
