@@ -3,6 +3,7 @@ import { CriaUsuarioDTO } from './dto/CriaUsuario.dto';
 import { ListaUsuarioDTO } from './dto/ListaUsuario.dto';
 import { AtualizaUsuarioDTO } from './dto/AtualizaUsuario.dto';
 import { UsuarioService } from './usuario.service';
+import { HashearSenhaPipe } from '../../recursos/pipes/hashear-senha'; // boa prática com has relativo
 
 @Controller('/usuarios')
 export class UsuarioController {
@@ -11,8 +12,14 @@ export class UsuarioController {
     ) { };
 
     @Post()
-    async criaUsuario(@Body() dadosDoUsuario: CriaUsuarioDTO) {
-        const usuarioCriado = await this.usuarioService.criaUsuario(dadosDoUsuario);
+    async criaUsuario(
+        @Body() { senha, ...dadosDoUsuario }: CriaUsuarioDTO,
+        @Body('senha', HashearSenhaPipe) senhaHasheada: string
+    ) {
+        const usuarioCriado = await this.usuarioService.criaUsuario({
+            ...dadosDoUsuario,
+            senha: senhaHasheada
+        });
 
         return {
             usuario: new ListaUsuarioDTO(usuarioCriado.id,usuarioCriado.nome,usuarioCriado.email),
