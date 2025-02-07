@@ -3,7 +3,7 @@ import { CriaUsuarioDTO } from './dto/CriaUsuario.dto';
 import { ListaUsuarioDTO } from './dto/ListaUsuario.dto';
 import { AtualizaUsuarioDTO } from './dto/AtualizaUsuario.dto';
 import { UsuarioService } from './usuario.service';
-import { HashearSenhaPipe } from '../../recursos/pipes/hashear-senha'; // boa prática com has relativo
+import { HashearSenhaPipe } from '../../recursos/pipes/hashear-senha.pipe'; // boa prática com has relativo
 
 @Controller('/usuarios')
 export class UsuarioController {
