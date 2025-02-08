@@ -1,58 +1,36 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
-import { AutenticacaDto } from './dto/autenticaca.dto';
-import { UsuarioEntity } from '../usuario/usuario.entity';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { UsuarioService } from '../usuario/usuario.service';
+import { JwtService } from '@nestjs/jwt';
+import * as bcrypt from 'bcrypt';
 
-import * as jwt from 'jsonwebtoken'
-import * as bcrypt from 'bcrypt'
+interface UsuarioPayload {
+  sub: string;
+  nome: string;
+}
 
 @Injectable()
 export class AutenticacaoService {
   constructor(
-    @InjectRepository(UsuarioEntity)
-    private readonly usuarioRepository: Repository<UsuarioEntity>
+    private usuarioService: UsuarioService,
+    private jwtService: JwtService
   ) {}
 
-  async login(dadosLogin: AutenticacaDto) {
-    try {
-      const { email, senha } = dadosLogin;
-      const usuario = await this.buscaUsuario(email);
-      const senhaHasheada = usuario.senha;
+  async login(email: string, senhaInserida: string) {
+      const usuario = await this.usuarioService.buscaPorEmail(email);
 
-      await this.verificaUsuario(senha, senhaHasheada);
-      
-      const token = await this.geraJWT(usuario);
+      const usuarioFoiAutenticado = await bcrypt.compare(senhaInserida, usuario.senha);
 
-      return token;
-    } catch (error) {
-      return error
-    }
-    
-  }
-
-  private async buscaUsuario(email: string): Promise<UsuarioEntity> {
-    const usuario = await this.usuarioRepository.findOneBy({ email })
-
-    if (!usuario) {
-      throw new NotFoundException('Usuário não encontrado.')
-    }
-
-    return usuario;
-  }
-
-  private async verificaUsuario(senha: string, senhaHasheada: string): Promise<void> {
-    const combina = await bcrypt.compare(senha, senhaHasheada)
-
-      if (!combina) {
-        throw new Error('O email ou a senha está incorreto.')
+      if (!usuarioFoiAutenticado) {
+        throw new UnauthorizedException('O email ou a senha está incorreto.')
       }
 
-      return;
-  }
-
-  private async geraJWT(usuario: UsuarioEntity): Promise<string> {
-    const token = jwt.sign({ sub: usuario.id, nome: usuario.nome }, 'privateKey');
-    return token;
+      const payload: UsuarioPayload = {
+        sub: usuario.id, // subject = sujeito
+        nome: usuario.nome
+      }
+      
+      return {
+        token_acesso: await this.jwtService.signAsync(payload),
+      };
   }
 }

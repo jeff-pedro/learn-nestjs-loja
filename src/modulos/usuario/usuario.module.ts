@@ -11,6 +11,7 @@ import { ProdutoEntity } from "src/modulos/produto/produto.entity";
     imports: [TypeOrmModule.forFeature([UsuarioEntity, ProdutoEntity])],
     controllers: [UsuarioController],
     providers: [UsuarioService, UsuarioRepository, EmailEhUnicoValidator],
+    exports: [UsuarioService]
 })
 
 export class UsuarioModule { }

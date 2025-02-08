@@ -1,11 +1,18 @@
 import { Module } from '@nestjs/common';
 import { AutenticacaoService } from './autenticacao.service';
 import { AutenticacaoController } from './autenticacao.controller';
-import { UsuarioEntity } from '../usuario/usuario.entity';
-import { TypeOrmModule } from '@nestjs/typeorm';
+import { UsuarioModule } from '../usuario/usuario.module';
+import { JwtModule } from '@nestjs/jwt';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([UsuarioEntity])],
+  imports: [
+    UsuarioModule, 
+    JwtModule.register({
+      global: true,
+      secret: 'SEGREDO',
+      signOptions: { expiresIn: '72h' }
+    }),
+  ],
   controllers: [AutenticacaoController],
   providers: [AutenticacaoService],
 })
