@@ -1,9 +1,10 @@
-import { Body, Controller, Delete, Get, Param, Post, Put, Query } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Put, Query, UseGuards } from '@nestjs/common';
 import { CriaUsuarioDTO } from './dto/CriaUsuario.dto';
 import { ListaUsuarioDTO } from './dto/ListaUsuario.dto';
 import { AtualizaUsuarioDTO } from './dto/AtualizaUsuario.dto';
 import { UsuarioService } from './usuario.service';
 import { HashearSenhaPipe } from '../../recursos/pipes/hashear-senha.pipe'; // boa prática com has relativo
+import { AutenticacaoGuard } from '../../modulos/autenticacao/autenticacao.guard';
 
 @Controller('/usuarios')
 export class UsuarioController {
@@ -12,6 +13,7 @@ export class UsuarioController {
     ) { };
 
     @Post()
+    @UseGuards(AutenticacaoGuard)
     async criaUsuario(
         @Body() { senha, ...dadosDoUsuario }: CriaUsuarioDTO,
         @Body('senha', HashearSenhaPipe) senhaHasheada: string
