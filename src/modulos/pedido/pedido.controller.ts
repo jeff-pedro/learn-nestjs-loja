@@ -36,13 +36,10 @@ export class PedidoController {
     @Req() req: RequisicaoComUsuario,
   ) {
     const usuarioId = req.usuario.sub;
-    console.log(usuarioId);
-    
-    return this.pedidoService.atualizaPedido(pedidoId, dadosDeAtualizacao, usuarioId);
+    return this.pedidoService.atualizaPedido(
+      pedidoId,
+      dadosDeAtualizacao, 
+      usuarioId
+    );
   }
-
-  // @Delete(':id')
-  // remove(@Param('id') id: string) {
-  //   return this.pedidoService.remove(+id);
-  // }
 }

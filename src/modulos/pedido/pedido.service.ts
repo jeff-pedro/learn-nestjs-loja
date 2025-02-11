@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
+import { BadRequestException, ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
 import { PedidoEntity } from './pedido.entity';
 import { StatusPedido } from './enum/status-pedido.enum';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -127,9 +127,14 @@ export class PedidoService {
   }
 
   async atualizaPedido(id: string, dto: AtualizaPedidoDTO, usuarioId: string) {
-    // const pedido = await this.pedidoRepository.findOneBy({ id });
-    const pedido = await this.pedidoRepository.findOne({
-      where: { id: id, usuario: { id: usuarioId } },
+    /* Minha solução */
+    // const pedido = await this.pedidoRepository.findOne({
+    //   where: { id: id, usuario: { id: usuarioId } },
+    //   relations: ['usuario']
+    // });
+
+     const pedido = await this.pedidoRepository.findOne({
+      where: { id },
       relations: ['usuario']
     });
 
@@ -137,6 +142,10 @@ export class PedidoService {
 
     if (pedido === null) {
       throw new NotFoundException('O pedido não foi encontrado.');
+    }
+
+    if(pedido.usuario.id !== usuarioId) {
+      throw new ForbiddenException('Você não tem autorização para atualizar esse pedido.')
     }
 
     Object.assign(pedido, dto as unknown as PedidoEntity);
