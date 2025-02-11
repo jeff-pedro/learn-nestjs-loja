@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { PedidoEntity } from './pedido.entity';
 import { StatusPedido } from './enum/status-pedido.enum';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -126,8 +126,12 @@ export class PedidoService {
     return pedido;
   }
 
-  async atualizaPedido(id: string, dto: AtualizaPedidoDTO) {
-    const pedido = await this.pedidoRepository.findOneBy({ id });
+  async atualizaPedido(id: string, dto: AtualizaPedidoDTO, usuarioId: string) {
+    // const pedido = await this.pedidoRepository.findOneBy({ id });
+    const pedido = await this.pedidoRepository.findOne({
+      where: { id: id, usuario: { id: usuarioId } },
+      relations: ['usuario']
+    });
 
     // throw new Error("Simulando erro de banco de dadoss")
 
