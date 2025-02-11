@@ -17,7 +17,7 @@ export class AutenticacaoGuard implements CanActivate {
     const token = this.extrairTokenDoCabecalho(requisicao);
 
     if(!token) {
-     throw new UnauthorizedException('Error de autenticação');
+     throw new UnauthorizedException('Erro de autenticação');
     }
 
     try {
