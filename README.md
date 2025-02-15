@@ -32,6 +32,12 @@ Subindo o as dependencia com `docker-compose`
 docker compose up -d
 ```
 
+Realizando as migrações
+
+```bash
+npm run typeorm migration:run
+```
+
 Executando a aplicação
 
 ```bash

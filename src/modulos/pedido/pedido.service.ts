@@ -1,12 +1,12 @@
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
 import { PedidoEntity } from './pedido.entity';
 import { StatusPedido } from './enum/status-pedido.enum';
 import { InjectRepository } from '@nestjs/typeorm';
-import { UsuarioEntity } from 'src/usuario/usuario.entity';
+import { UsuarioEntity } from '../../modulos/usuario/usuario.entity';
 import { In, Repository } from 'typeorm';
 import { CriaPedidoDTO } from './dto/CriaPedido.dto';
 import { ItemPedidoEntity } from './itempedido.entity';
-import { ProdutoEntity } from 'src/produto/produto.entity';
+import { ProdutoEntity } from '../../modulos/produto/produto.entity';
 import { AtualizaPedidoDTO } from './dto/AtualizaPedido.dto';
 
 @Injectable()
@@ -126,13 +126,26 @@ export class PedidoService {
     return pedido;
   }
 
-  async atualizaPedido(id: string, dto: AtualizaPedidoDTO) {
-    const pedido = await this.pedidoRepository.findOneBy({ id });
+  async atualizaPedido(id: string, dto: AtualizaPedidoDTO, usuarioId: string) {
+    /* Minha solução */
+    // const pedido = await this.pedidoRepository.findOne({
+    //   where: { id: id, usuario: { id: usuarioId } },
+    //   relations: ['usuario']
+    // });
+
+     const pedido = await this.pedidoRepository.findOne({
+      where: { id },
+      relations: ['usuario']
+    });
 
     // throw new Error("Simulando erro de banco de dadoss")
 
     if (pedido === null) {
       throw new NotFoundException('O pedido não foi encontrado.');
+    }
+
+    if(pedido.usuario.id !== usuarioId) {
+      throw new ForbiddenException('Você não tem autorização para atualizar esse pedido.')
     }
 
     Object.assign(pedido, dto as unknown as PedidoEntity);
